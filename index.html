@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你是人间四月天 · 卡农双手合弹版</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top, #2a103a 0%, #12061d 42%, #05010a 100%);
+    }
+
+    .bg-stars {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      animation: starFloat linear infinite;
+    }
+
+    @keyframes starFloat {
+      from { transform: translateY(0); opacity: .2; }
+      50% { opacity: .85; }
+      to { transform: translateY(-120vh); opacity: .1; }
+    }
+
+    .heart-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 8;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .heart {
+      position: absolute;
+      width: 9px;
+      height: 8px;
+      pointer-events: none;
+      animation: heartRise linear forwards;
+      opacity: .98;
+      filter:
+        drop-shadow(0 0 5px rgba(255, 90, 160, 0.75))
+        drop-shadow(0 0 12px rgba(255, 90, 160, 0.32));
+    }
+
+    .heart svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+@keyframes heartRise {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(var(--scale));
+        opacity: 0;
+      }
+      12% {
+        opacity: .98;
+      }
+      100% {
+        transform: translate3d(var(--drift), -110vh, 0) rotate(var(--spin)) scale(var(--scale));
+        opacity: 0;
+      }
+    }
+
+    .final-banner {
+      position: fixed;
+      left: 50%;
+      top: 56%;
+      transform: translate(-50%, -50%) scale(0.86);
+      z-index: 22;
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.98);
+      font-size: clamp(16px, 4.8vw, 26px);
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.7),
+        0 0 18px rgba(255,120,180,0.35);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      box-shadow:
+        0 0 12px rgba(255,255,255,0.12),
+        0 0 28px rgba(255,90,160,0.22);
+    }
+
+    .final-banner.show {
+      animation: bannerIn 0.7s ease forwards, textBeat 2s 0.7s ease-in-out infinite;
+    }
+
+    .char-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 30;
+      pointer-events: none;
+      animation: charBurst 1.05s ease forwards;
+      white-space: nowrap;
+      padding: 2px 8px 10px;
+    }
+
+    .char-pop .intro-char {
+      display: block;
+      position: relative;
+      color: #fff;
+      font-size: clamp(26px, 10vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.95),
+        0 0 18px rgba(255,120,180,0.72),
+        0 0 28px rgba(255,90,160,0.42);
+    }
+
+    .char-pop .intro-symbol {
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: calc(100% - 6px);
+      transform: translateX(calc(-50% + var(--note-dx, 0px))) rotate(var(--note-rot, 0deg));
+      color: #fff7fb;
+      font-size: clamp(15px, 5vw, 24px);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow:
+        0 0 7px rgba(255,255,255,0.92),
+        0 0 16px rgba(255,160,210,0.68),
+        0 0 24px rgba(255,90,160,0.32);
+      opacity: 0.95;
+    }
+
+    .note-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 31;
+      pointer-events: none;
+      color: #fff7fb;
+      font-size: clamp(15px, 4.8vw, 24px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.5px;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.95),
+        0 0 18px rgba(255,160,210,0.78),
+        0 0 28px rgba(255,90,160,0.45);
+      animation: noteFloat 1.25s ease forwards;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    @keyframes noteFloat {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -60%) scale(1.05);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -190%) scale(0.9);
+      }
+    }
+
+    @keyframes bannerIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.78);
+      }
+      60% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.04);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes charBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.55);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -56%) scale(1.06);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -125%) scale(0.98);
+      }
+    }
+
+    .kitty-wrap {
+      position: fixed;
+      left: 50%;
+      top: 34%;
+      transform: translate(-50%, -50%);
+      width: min(44vw, 220px);
+      aspect-ratio: 1 / 1;
+      z-index: 12;
+      animation: kittyFloat 3.8s ease-in-out infinite;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.18))
+              drop-shadow(0 0 26px rgba(255,90,160,0.22));
+    }
+
+    .zxy-text {
+      position: fixed;
+      left: 50%;
+      bottom: 14vh;
+      transform: translateX(-50%);
+      z-index: 18;
+      color: #fff;
+      font-size: clamp(28px, 9vw, 48px);
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow:
+        0 0 10px rgba(255,255,255,0.92),
+        0 0 24px rgba(255,110,180,0.72),
+        0 0 38px rgba(255,90,160,0.42);
+      animation: zxyBeat 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes kittyFloat {
+      0%,100% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-9px); }
+    }
+
+    @keyframes zxyBeat {
+      0%,100% { transform: translateX(-50%) scale(1); }
+      30% { transform: translateX(-50%) scale(1.04); }
+      55% { transform: translateX(-50%) scale(.985); }
+      80% { transform: translateX(-50%) scale(1.02); }
+    }
+
+    @keyframes textBeat {
+      0%,100% { transform: translate(-50%, -50%) scale(1); }
+      30% { transform: translate(-50%, -50%) scale(1.04); }
+      55% { transform: translate(-50%, -50%) scale(.985); }
+      80% { transform: translate(-50%, -50%) scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-stars" id="bgStars"></div>
+  <div class="heart-layer" id="heartLayer"></div>
+
+  <div class="final-banner" id="finalBanner">你是人间四月天</div>
+
+  <div class="kitty-wrap" aria-hidden="true">
+    <svg viewBox="0 0 400 400" width="100%" height="100%">
+      <defs>
+        <radialGradient id="headGlow" cx="50%" cy="35%" r="70%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#fffafc"/>
+        </radialGradient>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <polygon points="104,108 64,42 150,86" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="4"/>
+      <polygon points="296,108 336,42 250,86" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="4"/>
+      <ellipse cx="200" cy="200" rx="132" ry="118" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="5" filter="url(#softGlow)"/>
+      <ellipse cx="290" cy="114" rx="30" ry="25" fill="#ff4f9f"/>
+      <ellipse cx="334" cy="100" rx="30" ry="25" fill="#ff6aae"/>
+      <circle cx="312" cy="108" r="12" fill="#ffd34d"/>
+      <ellipse cx="148" cy="188" rx="9" ry="15" fill="#2a1b25"/>
+      <ellipse cx="248" cy="188" rx="9" ry="15" fill="#2a1b25"/>
+      <ellipse cx="200" cy="214" rx="14" ry="10" fill="#ffd34d"/>
+      <line x1="92" y1="204" x2="146" y2="198" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="86" y1="224" x2="144" y2="220" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="98" y1="244" x2="150" y2="248" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="254" y1="198" x2="308" y2="204" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="256" y1="220" x2="314" y2="224" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="250" y1="248" x2="302" y2="244" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="118" cy="228" rx="16" ry="10" fill="#ffd6e8" opacity="0.65"/>
+      <ellipse cx="282" cy="228" rx="16" ry="10" fill="#ffd6e8" opacity="0.65"/>
+    </svg>
+  </div>
+
+  <div class="zxy-text">zxy</div>
+
+  <script>
+    const bgStars = document.getElementById('bgStars');
+    const heartLayer = document.getElementById('heartLayer');
+
+    function createStar() {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = 1 + Math.random() * 3;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = (80 + Math.random() * 30) + 'vh';
+      s.style.opacity = (0.15 + Math.random() * 0.6).toFixed(2);
+      s.style.animationDuration = (10 + Math.random() * 14).toFixed(2) + 's';
+      s.style.animationDelay = (-Math.random() * 20).toFixed(2) + 's';
+      bgStars.appendChild(s);
+    }
+
+    function createHeart(x, y, options = {}) {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const scale = (options.scale ?? (0.55 + Math.random() * 0.9)).toFixed(2);
+      const drift = ((Math.random() - 0.5) * (options.driftRange ?? 180)).toFixed(0) + 'px';
+      const spin = ((Math.random() - 0.5) * 12).toFixed(0) + 'deg';
+      const duration = (options.duration ?? (4.8 + Math.random() * 4.2)).toFixed(2) + 's';
+      const width = (options.width ?? (8 + Math.random() * 7)).toFixed(0) + 'px';
+      const height = (options.height ?? (7 + Math.random() * 6)).toFixed(0) + 'px';
+
+      h.style.left = x + 'px';
+      h.style.top = y + 'px';
+      h.style.width = width;
+      h.style.height = height;
+      h.style.setProperty('--scale', scale);
+      h.style.setProperty('--drift', drift);
+      h.style.setProperty('--spin', spin);
+      h.style.animationDuration = duration;
+      h.style.opacity = options.opacity ?? (0.55 + Math.random() * 0.45);
+
+      h.innerHTML = `
+        <svg viewBox="0 0 100 90" aria-hidden="true">
+          <defs>
+            <linearGradient id="g${Math.random().toString(36).slice(2, 8)}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffb2d8"/>
+              <stop offset="55%" stop-color="#ff73b2"/>
+              <stop offset="100%" stop-color="#ff4f9f"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 82
+                   C47 78, 15 56, 15 31
+                   C15 16, 25 8, 36 8
+                   C43 8, 48 12, 50 18
+                   C52 12, 57 8, 64 8
+                   C75 8, 85 16, 85 31
+                   C85 56, 53 78, 50 82 Z"
+                fill="url(#g${Math.random().toString(36).slice(2, 8)})"
+                stroke="rgba(255,255,255,0.52)"
+                stroke-width="2"
+                stroke-linejoin="round"/>
+        </svg>
+      `;
+
+      // Fix gradient id match after insertion
+      const svg = h.querySelector('svg');
+      const grad = svg.querySelector('linearGradient');
+      const path = svg.querySelector('path');
+      const gid = grad.id;
+      path.setAttribute('fill', `url(#${gid})`);
+
+      heartLayer.appendChild(h);
+      h.addEventListener('animationend', () => h.remove());
+    }
+
+    function seedHearts() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      for (let i = 0; i < 70; i++) {
+        createHeart(
+          Math.random() * w,
+          h * 0.18 + Math.random() * h * 0.82,
+          {
+            duration: 6 + Math.random() * 6,
+            driftRange: 120,
+            scale: 0.45 + Math.random() * 1.0,
+            width: 7 + Math.random() * 5,
+            height: 6 + Math.random() * 4,
+            opacity: 0.35 + Math.random() * 0.55
+          }
+        );
+      }
+
+      const cx = w / 2;
+      const cy = h * 0.80;
+      for (let i = 0; i < 26; i++) {
+        const angle = (Math.PI * 2 * i) / 26;
+        const r = 55 + Math.random() * 95;
+        createHeart(
+          cx + Math.cos(angle) * r,
+          cy + Math.sin(angle) * r * 0.35,
+          {
+            duration: 5.5 + Math.random() * 4.5,
+            driftRange: 90,
+            scale: 0.7 + Math.random() * 0.8,
+            width: 8 + Math.random() * 5,
+            height: 7 + Math.random() * 4,
+            opacity: 0.6 + Math.random() * 0.35
+          }
+        );
+      }
+    }
+
+    function burstHearts(x, y, count = 44) {
+      for (let i = 0; i < count; i++) {
+        createHeart(x + (Math.random() - 0.5) * 56, y + (Math.random() - 0.5) * 34, {
+          duration: 4 + Math.random() * 3.6,
+          driftRange: 240,
+          scale: 0.7 + Math.random() * 1.1,
+          width: 8 + Math.random() * 4,
+          height: 7 + Math.random() * 3,
+          opacity: 0.7 + Math.random() * 0.3
+        });
+      }
+    }
+
+    function keepHeartsVisible() {
+      const current = heartLayer.childElementCount;
+      if (current < 90) {
+        const add = 18;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        for (let i = 0; i < add; i++) {
+          createHeart(Math.random() * w, h + Math.random() * 120, {
+            duration: 5 + Math.random() * 5,
+            driftRange: 160,
+            scale: 0.55 + Math.random() * 0.9,
+            width: 7 + Math.random() * 4,
+            height: 6 + Math.random() * 3,
+            opacity: 0.45 + Math.random() * 0.45
+          });
+        }
+      }
+    }
+
+    for (let i = 0; i < 42; i++) createStar();
+    seedHearts();
+    setTimeout(() => burstHearts(window.innerWidth / 2, window.innerHeight * 0.78, 44), 450);
+    setInterval(keepHeartsVisible, 900);
+
+    
+    const phrase = '你是人间四月天';
+    const introSymbols = ['♪', '♫', '♩', '♬', '♪', '♫', '♩'];
+    let phraseIndex = 0;
+    let clickSoundIndex = 0;
+    let audioCtx = null;
+    let performanceIndex = 0;
+    let lastPressAt = 0;
+    const finalBanner = document.getElementById('finalBanner');
+
+    // 点击演奏版《卡农》：以 D 大调经典和声进行改写
+    // 大量使用双音、三和弦和分解和弦，按起来更像在钢琴上推进。
+    // 经典进行：D - A - Bm - F#m - G - D - G - A
+    const performanceScore = [
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [123.47, 246.94], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [185.00, 293.66], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [246.94, 369.99], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 493.88], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [92.50, 185.00], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [138.59, 277.18], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [185.00, 369.99], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 554.37], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [123.47, 246.94], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [185.00, 293.66], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [246.94, 369.99], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 493.88], label: 'Bm', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [92.50, 185.00], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [138.59, 277.18], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [185.00, 369.99], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 554.37], label: 'F#m', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.68, hold: 1.10, spread: 0.018 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 440.00, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 329.63, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [123.47, 246.94, 369.99], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [185.00, 293.66], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [246.94, 369.99, 493.88], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 493.88], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [92.50, 185.00, 369.99], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [138.59, 277.18], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [185.00, 369.99, 554.37], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 554.37], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [196.00, 392.00, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 440.00, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [196.00, 392.00, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 329.63, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 440.00, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 329.63, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [123.47, 246.94, 369.99], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [185.00, 293.66], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [246.94, 369.99, 493.88], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 493.88], label: 'Bm', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [92.50, 185.00, 369.99], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [138.59, 277.18], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [185.00, 369.99, 554.37], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 554.37], label: 'F#m', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [196.00, 392.00, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 440.00, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [369.99, 587.33], label: 'D', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [196.00, 392.00, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [293.66, 587.33], label: 'G', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 329.63, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [277.18, 440.00], label: 'A', dyn: 0.82, hold: 1.00, spread: 0.015 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 369.99, 587.33], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [293.66, 440.00, 739.99], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 440.00], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [369.99, 587.33, 739.99], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [164.81, 277.18, 440.00], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 329.63, 554.37], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [164.81, 329.63], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [277.18, 440.00, 554.37], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [123.47, 246.94, 369.99], label: 'Bm', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [185.00, 293.66, 493.88], label: 'Bm', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [246.94, 369.99, 587.33], label: 'Bm', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [185.00, 369.99], label: 'Bm', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [293.66, 493.88, 587.33], label: 'Bm', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [92.50, 185.00, 369.99], label: 'F#m', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [138.59, 277.18, 554.37], label: 'F#m', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [185.00, 369.99, 739.99], label: 'F#m', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [138.59, 369.99], label: 'F#m', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [277.18, 554.37, 739.99], label: 'F#m', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 293.66, 587.33], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [196.00, 392.00, 783.99], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 392.00], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [293.66, 587.33, 783.99], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 293.66, 440.00], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 369.99, 587.33], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [293.66, 440.00, 739.99], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 440.00], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [369.99, 587.33, 739.99], label: 'D', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 293.66, 587.33], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [196.00, 392.00, 783.99], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 392.00], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [293.66, 587.33, 783.99], label: 'G', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [164.81, 277.18, 440.00], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [220.00, 329.63, 554.37], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [164.81, 329.63], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [277.18, 440.00, 554.37], label: 'A', dyn: 0.95, hold: 0.92, spread: 0.014 },
+      { notes: [146.83, 293.66, 440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 369.99, 587.33], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [369.99, 587.33, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 587.33, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [110.00, 220.00, 329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [164.81, 277.18, 440.00], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [277.18, 440.00, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 440.00, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [123.47, 246.94, 369.99, 587.33], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [185.00, 293.66, 493.88], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [246.94, 369.99, 587.33], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 493.88, 587.33], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [369.99, 587.33], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [246.94, 493.88, 587.33], label: 'Bm', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [92.50, 185.00, 369.99, 739.99], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [138.59, 277.18, 554.37], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [185.00, 369.99, 739.99], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [277.18, 554.37, 739.99], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [369.99, 739.99], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [185.00, 554.37, 739.99], label: 'F#m', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [98.00, 196.00, 392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [146.83, 293.66, 587.33], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [196.00, 392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 587.33, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [196.00, 587.33, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [146.83, 293.66, 440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 369.99, 587.33], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [369.99, 587.33, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [440.00, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 587.33, 739.99], label: 'D', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [98.00, 196.00, 392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [146.83, 293.66, 587.33], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [196.00, 392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [293.66, 587.33, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [392.00, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [196.00, 587.33, 783.99], label: 'G', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [110.00, 220.00, 329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [164.81, 277.18, 440.00], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [277.18, 440.00, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [329.63, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [220.00, 440.00, 554.37], label: 'A', dyn: 1.16, hold: 0.84, spread: 0.012 },
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 369.99, 587.33], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [110.00, 277.18, 440.00], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [123.47, 246.94], label: 'Bm', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [246.94, 369.99], label: 'Bm', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [185.00, 293.66], label: 'Bm', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [123.47, 293.66, 493.88], label: 'Bm', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [92.50, 185.00], label: 'F#m', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [185.00, 369.99], label: 'F#m', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [138.59, 277.18], label: 'F#m', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [92.50, 277.18, 554.37], label: 'F#m', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [98.00, 293.66, 587.33], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [293.66, 440.00], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [220.00, 369.99], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 369.99, 587.33], label: 'D', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [98.00, 196.00], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [196.00, 392.00], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 293.66], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [98.00, 293.66, 587.33], label: 'G', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [110.00, 220.00], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [220.00, 329.63], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [164.81, 277.18], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [110.00, 277.18, 440.00], label: 'A', dyn: 0.74, hold: 1.04, spread: 0.018 },
+      { notes: [146.83, 440.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [440.00, 739.99], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [739.99, 880.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [146.83, 440.00, 880.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [110.00, 329.63], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [329.63, 659.25], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [659.25, 880.00], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [110.00, 329.63, 880.00], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [123.47, 369.99], label: 'Bm', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [369.99, 739.99], label: 'Bm', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [739.99, 987.77], label: 'Bm', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [123.47, 369.99, 987.77], label: 'Bm', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [92.50, 369.99], label: 'F#m', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [369.99, 554.37], label: 'F#m', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [554.37, 739.99], label: 'F#m', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [92.50, 369.99, 739.99], label: 'F#m', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [98.00, 392.00], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [392.00, 587.33], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [587.33, 783.99], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [98.00, 392.00, 783.99], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [146.83, 440.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [440.00, 739.99], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [739.99, 880.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [146.83, 440.00, 880.00], label: 'D', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [98.00, 392.00], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [392.00, 587.33], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [587.33, 783.99], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [98.00, 392.00, 783.99], label: 'G', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [110.00, 329.63], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [329.63, 659.25], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [659.25, 880.00], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [110.00, 329.63, 880.00], label: 'A', dyn: 0.90, hold: 0.90, spread: 0.014 },
+      { notes: [146.83, 293.66, 440.00, 739.99], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [220.00, 369.99, 587.33, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [293.66, 440.00, 739.99, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [440.00, 739.99, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [146.83, 440.00, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [110.00, 220.00, 329.63, 554.37], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [164.81, 277.18, 440.00, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [220.00, 329.63, 554.37, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [329.63, 554.37, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [110.00, 329.63, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [123.47, 246.94, 369.99, 587.33], label: 'Bm', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [185.00, 293.66, 493.88, 987.77], label: 'Bm', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [246.94, 369.99, 587.33, 987.77], label: 'Bm', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [369.99, 587.33, 987.77], label: 'Bm', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [123.47, 369.99, 987.77], label: 'Bm', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [92.50, 185.00, 369.99, 739.99], label: 'F#m', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [138.59, 277.18, 554.37, 739.99], label: 'F#m', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [185.00, 369.99, 739.99, 739.99], label: 'F#m', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [369.99, 739.99, 739.99], label: 'F#m', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [92.50, 369.99, 739.99], label: 'F#m', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [98.00, 196.00, 392.00, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [146.83, 293.66, 587.33, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [196.00, 392.00, 783.99, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [392.00, 783.99, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [98.00, 392.00, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [146.83, 293.66, 440.00, 739.99], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [220.00, 369.99, 587.33, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [293.66, 440.00, 739.99, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [440.00, 739.99, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [146.83, 440.00, 880.00], label: 'D', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [98.00, 196.00, 392.00, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [146.83, 293.66, 587.33, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [196.00, 392.00, 783.99, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [392.00, 783.99, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [98.00, 392.00, 783.99], label: 'G', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [110.00, 220.00, 329.63, 554.37], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [164.81, 277.18, 440.00, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [220.00, 329.63, 554.37, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [329.63, 554.37, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [110.00, 329.63, 880.00], label: 'A', dyn: 1.28, hold: 0.78, spread: 0.011 },
+      { notes: [98.00, 196.00, 392.00], label: 'G', dyn: 0.84, hold: 0.98, spread: 0.015 },
+      { notes: [110.00, 220.00, 329.63], label: 'A', dyn: 0.90, hold: 0.92, spread: 0.015 },
+      { notes: [146.83, 293.66, 440.00, 739.99], label: 'D', dyn: 0.92, hold: 1.00, spread: 0.015 },
+      { notes: [220.00, 369.99, 587.33], label: 'D', dyn: 0.80, hold: 1.06, spread: 0.015 },
+      { notes: [293.66, 440.00, 739.99], label: 'D', dyn: 0.72, hold: 1.14, spread: 0.015 },
+      { notes: [293.66, 587.33, 880.00], label: 'D', dyn: 0.66, hold: 1.20, spread: 0.015 }
+    ];
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const sampleRate = audioCtx.sampleRate;
+        const impulseLength = Math.floor(sampleRate * 1.8);
+        const impulse = audioCtx.createBuffer(2, impulseLength, sampleRate);
+
+        for (let chn = 0; chn < 2; chn++) {
+          const data = impulse.getChannelData(chn);
+          for (let i = 0; i < impulseLength; i++) {
+            const t = i / impulseLength;
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.6) * 0.18;
+          }
+        }
+
+        audioCtx._master = audioCtx.createGain();
+        audioCtx._dry = audioCtx.createGain();
+        audioCtx._wet = audioCtx.createGain();
+        audioCtx._verb = audioCtx.createConvolver();
+
+        audioCtx._verb.buffer = impulse;
+        audioCtx._master.gain.value = 0.92;
+        audioCtx._dry.gain.value = 0.90;
+        audioCtx._wet.gain.value = 0.10;
+
+        audioCtx._dry.connect(audioCtx._master);
+        audioCtx._wet.connect(audioCtx._verb);
+        audioCtx._verb.connect(audioCtx._master);
+        audioCtx._master.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playHammer(startAt, amount = 0.006) {
+      const len = Math.floor(audioCtx.sampleRate * 0.022);
+      const buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < len; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.4);
+      }
+
+      const src = audioCtx.createBufferSource();
+      const bp = audioCtx.createBiquadFilter();
+      const gain = audioCtx.createGain();
+
+      src.buffer = buffer;
+      bp.type = 'bandpass';
+      bp.frequency.setValueAtTime(2300, startAt);
+      bp.Q.value = 0.9;
+
+      gain.gain.setValueAtTime(amount, startAt);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.022);
+
+      src.connect(bp);
+      bp.connect(gain);
+      gain.connect(audioCtx._dry);
+
+      src.start(startAt);
+      src.stop(startAt + 0.03);
+    }
+
+    function playTone(freq, startAt, duration = 0.32, volume = 0.020, tone = 'triangle') {
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const osc3 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lp = audioCtx.createBiquadFilter();
+
+      osc1.type = tone;
+      osc2.type = 'sine';
+      osc3.type = 'triangle';
+
+      osc1.frequency.setValueAtTime(freq, startAt);
+      osc2.frequency.setValueAtTime(freq * 2, startAt);
+      osc3.frequency.setValueAtTime(freq * 1.002, startAt);
+
+      lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(2450, startAt);
+
+      gain.gain.setValueAtTime(0.0001, startAt);
+      gain.gain.exponentialRampToValueAtTime(volume, startAt + 0.010);
+      gain.gain.exponentialRampToValueAtTime(volume * 0.56, startAt + 0.060);
+      gain.gain.exponentialRampToValueAtTime(volume * 0.18, startAt + duration * 0.58);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+
+      osc1.connect(lp);
+      osc2.connect(lp);
+      osc3.connect(lp);
+      lp.connect(gain);
+      gain.connect(audioCtx._dry);
+      gain.connect(audioCtx._wet);
+
+      osc1.start(startAt);
+      osc2.start(startAt);
+      osc3.start(startAt);
+
+      osc1.stop(startAt + duration + 0.04);
+      osc2.stop(startAt + duration + 0.04);
+      osc3.stop(startAt + duration + 0.04);
+    }
+
+    function playPianoLikeNote(index) {
+      ensureAudio();
+
+      const now = performance.now();
+      const gap = lastPressAt ? now - lastPressAt : 320;
+      lastPressAt = now;
+
+      const event = performanceScore[performanceIndex % performanceScore.length];
+      performanceIndex += 1;
+
+      const startAt = audioCtx.currentTime;
+      const notes = event.notes.slice().sort((a, b) => a - b);
+      const chordLabel = event.label;
+      const hold = event.hold || 1.0;
+      const dyn = event.dyn || 1.0;
+      const spread = event.spread || 0.014;
+
+      // 保留点击速度影响，但让落键更像真实双手演奏
+      const baseDuration = Math.max(0.22, Math.min(0.52, gap / 1000 * 0.66));
+      const duration = baseDuration * hold;
+      const volumeBoost = gap < 170 ? 1.06 : 1.0;
+
+      const bassRoot = notes[0];
+      const rightHand = notes.slice(-Math.min(3, notes.length));
+      const leftMain = bassRoot / 2;
+      const leftOctave = bassRoot;
+      const leftFifth = bassRoot * 1.5 <= 220 ? bassRoot * 1.5 : null;
+
+      // 每四拍做一点重音，像真正的句子推进
+      const phraseAccent = (performanceIndex % 4 === 1) ? 1.08 : 1.0;
+
+      // 左手：先落低音，再轻点八度/五度，形成支撑
+      playHammer(startAt, 0.0058 * dyn * phraseAccent);
+      playTone(leftMain, startAt, Math.min(duration * 1.18, 0.72), 0.014 * dyn * volumeBoost * phraseAccent, 'triangle');
+
+      playHammer(startAt + 0.028, 0.0042 * dyn);
+      playTone(leftOctave, startAt + 0.028, Math.min(duration * 0.98, 0.62), 0.011 * dyn * volumeBoost, 'sine');
+
+      if (leftFifth) {
+        playTone(leftFifth, startAt + 0.046, Math.min(duration * 0.86, 0.52), 0.008 * dyn * volumeBoost, 'sine');
+      }
+
+      // 右手：更像手指依次铺开的分解和弦
+      rightHand.forEach((freq, i) => {
+        const offset = 0.012 + i * Math.max(spread, 0.018);
+        const baseVol = rightHand.length >= 3 ? 0.017 : 0.020;
+        const tone = i === 0 ? 'triangle' : 'sine';
+        playHammer(startAt + offset, 0.0046 * dyn);
+        playTone(
+          freq,
+          startAt + offset,
+          Math.min(duration * (1.0 - i * 0.05), 0.56),
+          baseVol * dyn * volumeBoost * phraseAccent,
+          tone
+        );
+      });
+
+      // 顶音轻微回勾，增强“像双手合弹”的连贯感
+      if (rightHand.length >= 2) {
+        const top = rightHand[rightHand.length - 1];
+        playTone(
+          top,
+          startAt + 0.11,
+          Math.min(duration * 0.52, 0.28),
+          0.0065 * dyn * volumeBoost,
+          'sine'
+        );
+      }
+
+      return chordLabel;
+    }
+
+
+    function popIntroSymbol(x, y) {
+      if (phraseIndex >= phrase.length) return;
+      const char = phrase[phraseIndex];
+      const symbol = introSymbols[phraseIndex % introSymbols.length];
+      const el = document.createElement('div');
+      el.className = 'char-pop';
+      el.innerHTML = `<span class="intro-char">${char}</span><span class="intro-symbol">${symbol}</span>`;
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.setProperty('--note-dx', `${-10 + Math.random() * 20}px`);
+      el.style.setProperty('--note-rot', `${-16 + Math.random() * 32}deg`);
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+
+      phraseIndex += 1;
+
+      if (phraseIndex === phrase.length) {
+        setTimeout(() => finalBanner.classList.add('show'), 250);
+      }
+    }
+
+    function popNote(x, y, text) {
+      const el = document.createElement('div');
+      el.className = 'note-pop';
+      el.textContent = text;
+      el.style.left = (x + (Math.random() - 0.5) * 26) + 'px';
+      el.style.top = (y - 8 + (Math.random() - 0.5) * 18) + 'px';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    function handlePress(x, y) {
+      burstHearts(x, y, 54);
+      const chordLabel = playPianoLikeNote(clickSoundIndex);
+      clickSoundIndex += 1;
+
+      if (phraseIndex < phrase.length) {
+        popIntroSymbol(x, y);
+      } else {
+        popNote(x, y, chordLabel);
+      }
+    }
+
+    window.addEventListener('click', (e) => handlePress(e.clientX, e.clientY));
+    window.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      if (t) handlePress(t.clientX, t.clientY);
+    }, { passive: true });
+  </script>
+</body>
+</html>
