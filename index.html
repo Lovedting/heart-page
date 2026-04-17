@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你是人间四月天 · 乐谱逐音稳定版</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: radial-gradient(circle at top, #2a103a 0%, #12061d 42%, #05010a 100%);
+    }
+
+    .bg-stars {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      animation: starFloat linear infinite;
+    }
+
+    @keyframes starFloat {
+      from { transform: translateY(0); opacity: .2; }
+      50% { opacity: .85; }
+      to { transform: translateY(-120vh); opacity: .1; }
+    }
+
+    .heart-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 8;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .heart {
+      position: absolute;
+      width: 9px;
+      height: 8px;
+      pointer-events: none;
+      animation: heartRise linear forwards;
+      opacity: .98;
+      filter:
+        drop-shadow(0 0 5px rgba(255, 90, 160, 0.75))
+        drop-shadow(0 0 12px rgba(255, 90, 160, 0.32));
+    }
+
+    .heart svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+@keyframes heartRise {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(var(--scale));
+        opacity: 0;
+      }
+      12% {
+        opacity: .98;
+      }
+      100% {
+        transform: translate3d(var(--drift), -110vh, 0) rotate(var(--spin)) scale(var(--scale));
+        opacity: 0;
+      }
+    }
+.char-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 30;
+      pointer-events: none;
+      animation: charBurst 1.05s ease forwards;
+      white-space: nowrap;
+      padding: 2px 8px 10px;
+    }
+
+    .char-pop .intro-char {
+      display: block;
+      position: relative;
+      color: #fff;
+      font-size: clamp(26px, 10vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.95),
+        0 0 18px rgba(255,120,180,0.72),
+        0 0 28px rgba(255,90,160,0.42);
+    }
+
+    .char-pop .intro-symbol {
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: calc(100% - 6px);
+      transform: translateX(calc(-50% + var(--note-dx, 0px))) rotate(var(--note-rot, 0deg));
+      color: #fff7fb;
+      font-size: clamp(15px, 5vw, 24px);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow:
+        0 0 7px rgba(255,255,255,0.92),
+        0 0 16px rgba(255,160,210,0.68),
+        0 0 24px rgba(255,90,160,0.32);
+      opacity: 0.95;
+    }
+
+    .note-pop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 31;
+      pointer-events: none;
+      color: #fff7fb;
+      font-size: clamp(15px, 4.8vw, 24px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.5px;
+      text-shadow:
+        0 0 8px rgba(255,255,255,0.95),
+        0 0 18px rgba(255,160,210,0.78),
+        0 0 28px rgba(255,90,160,0.45);
+      animation: noteFloat 1.25s ease forwards;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    @keyframes noteFloat {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -60%) scale(1.05);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -190%) scale(0.9);
+      }
+    }
+60% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.04);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes charBurst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.55);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -56%) scale(1.06);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -125%) scale(0.98);
+      }
+    }
+
+    .kitty-wrap {
+      position: fixed;
+      left: 50%;
+      top: 34%;
+      transform: translate(-50%, -50%);
+      width: min(44vw, 220px);
+      aspect-ratio: 1 / 1;
+      z-index: 12;
+      animation: kittyFloat 3.8s ease-in-out infinite;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.18))
+              drop-shadow(0 0 26px rgba(255,90,160,0.22));
+    }
+
+    .zxy-text {
+      position: fixed;
+      left: 50%;
+      bottom: 14vh;
+      transform: translateX(-50%);
+      z-index: 18;
+      color: #fff;
+      font-size: clamp(28px, 9vw, 48px);
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow:
+        0 0 10px rgba(255,255,255,0.92),
+        0 0 24px rgba(255,110,180,0.72),
+        0 0 38px rgba(255,90,160,0.42);
+      animation: zxyBeat 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes kittyFloat {
+      0%,100% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-9px); }
+    }
+
+    @keyframes zxyBeat {
+      0%,100% { transform: translateX(-50%) scale(1); }
+      30% { transform: translateX(-50%) scale(1.04); }
+      55% { transform: translateX(-50%) scale(.985); }
+      80% { transform: translateX(-50%) scale(1.02); }
+    }
+
+    @keyframes textBeat {
+      0%,100% { transform: translate(-50%, -50%) scale(1); }
+      30% { transform: translate(-50%, -50%) scale(1.04); }
+      55% { transform: translate(-50%, -50%) scale(.985); }
+      80% { transform: translate(-50%, -50%) scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-stars" id="bgStars"></div>
+  <div class="heart-layer" id="heartLayer"></div>
+
+
+  <div class="kitty-wrap" aria-hidden="true">
+    <svg viewBox="0 0 400 400" width="100%" height="100%">
+      <defs>
+        <radialGradient id="headGlow" cx="50%" cy="35%" r="70%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#fffafc"/>
+        </radialGradient>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <polygon points="104,108 64,42 150,86" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="4"/>
+      <polygon points="296,108 336,42 250,86" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="4"/>
+      <ellipse cx="200" cy="200" rx="132" ry="118" fill="url(#headGlow)" stroke="#ffd7e8" stroke-width="5" filter="url(#softGlow)"/>
+      <ellipse cx="290" cy="114" rx="30" ry="25" fill="#ff4f9f"/>
+      <ellipse cx="334" cy="100" rx="30" ry="25" fill="#ff6aae"/>
+      <circle cx="312" cy="108" r="12" fill="#ffd34d"/>
+      <ellipse cx="148" cy="188" rx="9" ry="15" fill="#2a1b25"/>
+      <ellipse cx="248" cy="188" rx="9" ry="15" fill="#2a1b25"/>
+      <ellipse cx="200" cy="214" rx="14" ry="10" fill="#ffd34d"/>
+      <line x1="92" y1="204" x2="146" y2="198" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="86" y1="224" x2="144" y2="220" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="98" y1="244" x2="150" y2="248" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="254" y1="198" x2="308" y2="204" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="256" y1="220" x2="314" y2="224" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <line x1="250" y1="248" x2="302" y2="244" stroke="#2a1b25" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="118" cy="228" rx="16" ry="10" fill="#ffd6e8" opacity="0.65"/>
+      <ellipse cx="282" cy="228" rx="16" ry="10" fill="#ffd6e8" opacity="0.65"/>
+    </svg>
+  </div>
+
+  <div class="zxy-text">zxy</div>
+
+  <script>
+    const bgStars = document.getElementById('bgStars');
+    const heartLayer = document.getElementById('heartLayer');
+
+    function createStar() {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = 1 + Math.random() * 3;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = (80 + Math.random() * 30) + 'vh';
+      s.style.opacity = (0.15 + Math.random() * 0.6).toFixed(2);
+      s.style.animationDuration = (10 + Math.random() * 14).toFixed(2) + 's';
+      s.style.animationDelay = (-Math.random() * 20).toFixed(2) + 's';
+      bgStars.appendChild(s);
+    }
+
+    function createHeart(x, y, options = {}) {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const scale = (options.scale ?? (0.55 + Math.random() * 0.9)).toFixed(2);
+      const drift = ((Math.random() - 0.5) * (options.driftRange ?? 180)).toFixed(0) + 'px';
+      const spin = ((Math.random() - 0.5) * 12).toFixed(0) + 'deg';
+      const duration = (options.duration ?? (4.8 + Math.random() * 4.2)).toFixed(2) + 's';
+      const width = (options.width ?? (8 + Math.random() * 7)).toFixed(0) + 'px';
+      const height = (options.height ?? (7 + Math.random() * 6)).toFixed(0) + 'px';
+
+      h.style.left = x + 'px';
+      h.style.top = y + 'px';
+      h.style.width = width;
+      h.style.height = height;
+      h.style.setProperty('--scale', scale);
+      h.style.setProperty('--drift', drift);
+      h.style.setProperty('--spin', spin);
+      h.style.animationDuration = duration;
+      h.style.opacity = options.opacity ?? (0.55 + Math.random() * 0.45);
+
+      h.innerHTML = `
+        <svg viewBox="0 0 100 90" aria-hidden="true">
+          <defs>
+            <linearGradient id="g${Math.random().toString(36).slice(2, 8)}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffb2d8"/>
+              <stop offset="55%" stop-color="#ff73b2"/>
+              <stop offset="100%" stop-color="#ff4f9f"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 82
+                   C47 78, 15 56, 15 31
+                   C15 16, 25 8, 36 8
+                   C43 8, 48 12, 50 18
+                   C52 12, 57 8, 64 8
+                   C75 8, 85 16, 85 31
+                   C85 56, 53 78, 50 82 Z"
+                fill="url(#g${Math.random().toString(36).slice(2, 8)})"
+                stroke="rgba(255,255,255,0.52)"
+                stroke-width="2"
+                stroke-linejoin="round"/>
+        </svg>
+      `;
+
+      // Fix gradient id match after insertion
+      const svg = h.querySelector('svg');
+      const grad = svg.querySelector('linearGradient');
+      const path = svg.querySelector('path');
+      const gid = grad.id;
+      path.setAttribute('fill', `url(#${gid})`);
+
+      heartLayer.appendChild(h);
+      h.addEventListener('animationend', () => h.remove());
+    }
+
+    function seedHearts() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      for (let i = 0; i < 70; i++) {
+        createHeart(
+          Math.random() * w,
+          h * 0.18 + Math.random() * h * 0.82,
+          {
+            duration: 6 + Math.random() * 6,
+            driftRange: 120,
+            scale: 0.45 + Math.random() * 1.0,
+            width: 7 + Math.random() * 5,
+            height: 6 + Math.random() * 4,
+            opacity: 0.35 + Math.random() * 0.55
+          }
+        );
+      }
+
+      const cx = w / 2;
+      const cy = h * 0.80;
+      for (let i = 0; i < 26; i++) {
+        const angle = (Math.PI * 2 * i) / 26;
+        const r = 55 + Math.random() * 95;
+        createHeart(
+          cx + Math.cos(angle) * r,
+          cy + Math.sin(angle) * r * 0.35,
+          {
+            duration: 5.5 + Math.random() * 4.5,
+            driftRange: 90,
+            scale: 0.7 + Math.random() * 0.8,
+            width: 8 + Math.random() * 5,
+            height: 7 + Math.random() * 4,
+            opacity: 0.6 + Math.random() * 0.35
+          }
+        );
+      }
+    }
+
+    function burstHearts(x, y, count = 44) {
+      for (let i = 0; i < count; i++) {
+        createHeart(x + (Math.random() - 0.5) * 56, y + (Math.random() - 0.5) * 34, {
+          duration: 4 + Math.random() * 3.6,
+          driftRange: 240,
+          scale: 0.7 + Math.random() * 1.1,
+          width: 8 + Math.random() * 4,
+          height: 7 + Math.random() * 3,
+          opacity: 0.7 + Math.random() * 0.3
+        });
+      }
+    }
+
+    function keepHeartsVisible() {
+      const current = heartLayer.childElementCount;
+      if (current < 90) {
+        const add = 18;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        for (let i = 0; i < add; i++) {
+          createHeart(Math.random() * w, h + Math.random() * 120, {
+            duration: 5 + Math.random() * 5,
+            driftRange: 160,
+            scale: 0.55 + Math.random() * 0.9,
+            width: 7 + Math.random() * 4,
+            height: 6 + Math.random() * 3,
+            opacity: 0.45 + Math.random() * 0.45
+          });
+        }
+      }
+    }
+
+    for (let i = 0; i < 42; i++) createStar();
+    seedHearts();
+    setTimeout(() => burstHearts(window.innerWidth / 2, window.innerHeight * 0.78, 44), 450);
+    setInterval(keepHeartsVisible, 900);
+
+    
+
+    let queuedNextStart = 0;
+    let fastClickStreak = 0;
+    const scoreEvents = [{"measure": 1, "beat": "1", "notes": [{"freq": 739.99, "dur": 2.0, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + D3"}, {"measure": 1, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 1, "beat": "2", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 1, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 2, "name": "F#4"}], "label": "F#4"}, {"measure": 1, "beat": "3", "notes": [{"freq": 659.26, "dur": 2.0, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A2"}, {"measure": 1, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 1, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 1, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 2, "beat": "1", "notes": [{"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + B2"}, {"measure": 2, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 2, "beat": "2", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 2, "beat": "2.5", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 2, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "C#5 + F#2"}, {"measure": 2, "beat": "3.5", "notes": [{"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 2, "beat": "4", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 2, "beat": "4.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 3, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G2"}, {"measure": 3, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 3, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 3, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 3, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + D2"}, {"measure": 3, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 3, "beat": "4", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 3, "beat": "4.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 4, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G2"}, {"measure": 4, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 4, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 4, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 4, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 4, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 4, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 4, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 5, "beat": "1", "notes": [{"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 2.0, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + F#5 + D3"}, {"measure": 5, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 5, "beat": "2", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 5, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 2, "name": "F#4"}], "label": "F#4"}, {"measure": 5, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 659.26, "dur": 2.0, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + E5 + A2"}, {"measure": 5, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 5, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 5, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 6, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "B4 + D5 + B2"}, {"measure": 6, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 6, "beat": "2", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 6, "beat": "2.5", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 6, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + C#5 + F#2"}, {"measure": 6, "beat": "3.5", "notes": [{"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 6, "beat": "4", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 6, "beat": "4.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 7, "beat": "1", "notes": [{"freq": 392.0, "dur": 2.0, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 7, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 7, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 7, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 7, "beat": "3", "notes": [{"freq": 369.99, "dur": 2.0, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + A4 + D2"}, {"measure": 7, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 7, "beat": "4", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 7, "beat": "4.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 8, "beat": "1", "notes": [{"freq": 392.0, "dur": 2.0, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 8, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 8, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 8, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 8, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + C#5 + A2"}, {"measure": 8, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 8, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 8, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 9, "beat": "1", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + F#5 + D3"}, {"measure": 9, "beat": "1.5", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 9, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D5 + D4"}, {"measure": 9, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#4 + A3"}, {"measure": 9, "beat": "3", "notes": [{"freq": 329.63, "dur": 0.5, "staff": 1, "name": "E4"}, {"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E4 + E5 + A2"}, {"measure": 9, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 9, "beat": "4", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "G4 + A3"}, {"measure": 9, "beat": "4.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 10, "beat": "1", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "F#4 + D5 + B2"}, {"measure": 10, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "D5 + F#3"}, {"measure": 10, "beat": "2", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "C#5 + B3"}, {"measure": 10, "beat": "2.5", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "B4 + F#3"}, {"measure": 10, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + C#5 + F#2"}, {"measure": 10, "beat": "3.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "F#5 + C#3"}, {"measure": 10, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "C#5 + A5 + F#3"}, {"measure": 10, "beat": "4.5", "notes": [{"freq": 987.77, "dur": 0.5, "staff": 1, "name": "B5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "B5 + C#3"}, {"measure": 11, "beat": "1", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G5 + G2"}, {"measure": 11, "beat": "1.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + D3"}, {"measure": 11, "beat": "2", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "E5 + G3"}, {"measure": 11, "beat": "2.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "G5 + D3"}, {"measure": 11, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + F#5 + D2"}, {"measure": 11, "beat": "3.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A2"}, {"measure": 11, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + D3"}, {"measure": 11, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "C#5 + F#3"}, {"measure": 12, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 12, "beat": "1.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 12, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 12, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + B3"}, {"measure": 12, "beat": "3", "notes": [{"freq": 329.63, "dur": 1.0, "staff": 1, "name": "E4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E4 + D5 + A2"}, {"measure": 12, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 12, "beat": "4", "notes": [{"freq": 329.63, "dur": 1.0, "staff": 1, "name": "E4"}, {"freq": 554.37, "dur": 1.0, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "E4 + C#5 + A3"}, {"measure": 12, "beat": "4.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 13, "beat": "1", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A5 + D3"}, {"measure": 13, "beat": "1.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#5 + A3"}, {"measure": 13, "beat": "1.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 13, "beat": "2", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "A5 + D4"}, {"measure": 13, "beat": "2.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#5 + A3"}, {"measure": 13, "beat": "2.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 13, "beat": "3", "notes": [{"freq": 880.0, "dur": 0.25, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A5 + A2"}, {"measure": 13, "beat": "3.2", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 13, "beat": "3.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 13, "beat": "3.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 13, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + A3"}, {"measure": 13, "beat": "4.2", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 13, "beat": "4.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "F#5 + E3"}, {"measure": 13, "beat": "4.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 14, "beat": "1", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "F#5 + B2"}, {"measure": 14, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "D5 + F#3"}, {"measure": 14, "beat": "1.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 14, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "F#5 + B3"}, {"measure": 14, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#4 + F#3"}, {"measure": 14, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 14, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + F#2"}, {"measure": 14, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 14, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "A4 + C#3"}, {"measure": 14, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 14, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#3"}, {"measure": 14, "beat": "4.2", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}], "label": "F#4"}, {"measure": 14, "beat": "4.5", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "G4 + C#3"}, {"measure": 14, "beat": "4.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 15, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + G2"}, {"measure": 15, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D3"}, {"measure": 15, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 15, "beat": "2", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G4 + G3"}, {"measure": 15, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 15, "beat": "2.8", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 15, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + D2"}, {"measure": 15, "beat": "3.2", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 15, "beat": "3.5", "notes": [{"freq": 293.66, "dur": 0.25, "staff": 1, "name": "D4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "D4 + A2"}, {"measure": 15, "beat": "3.8", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 15, "beat": "4", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 15, "beat": "4.2", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 15, "beat": "4.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + A2"}, {"measure": 15, "beat": "4.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 16, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + G2"}, {"measure": 16, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D3"}, {"measure": 16, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 16, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 16, "beat": "2.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C#5 + D3"}, {"measure": 16, "beat": "2.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 16, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 16, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 16, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 16, "beat": "3.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 16, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 16, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 16, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E5 + E3"}, {"measure": 16, "beat": "4.8", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}], "label": "F#5"}, {"measure": 17, "beat": "1", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + A5 + D3"}, {"measure": 17, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + F#5 + A3"}, {"measure": 17, "beat": "1.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "E5 + G5"}, {"measure": 17, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "F#5 + A5 + D4"}, {"measure": 17, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + F#5 + A3"}, {"measure": 17, "beat": "2.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "E5 + G5"}, {"measure": 17, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.25, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A5 + A2"}, {"measure": 17, "beat": "3.2", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 17, "beat": "3.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 17, "beat": "3.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 17, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + A3"}, {"measure": 17, "beat": "4.2", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 17, "beat": "4.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "F#5 + E3"}, {"measure": 17, "beat": "4.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 18, "beat": "1", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + F#5 + B2"}, {"measure": 18, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "B4 + D5 + F#3"}, {"measure": 18, "beat": "1.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "C#5 + E5"}, {"measure": 18, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + F#5 + B3"}, {"measure": 18, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#4 + F#3"}, {"measure": 18, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 18, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "F#4 + A4 + F#2"}, {"measure": 18, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 18, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "A4 + C#3"}, {"measure": 18, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 18, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#3"}, {"measure": 18, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 18, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#5 + C#3"}, {"measure": 18, "beat": "4.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 19, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 19, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D5 + D3"}, {"measure": 19, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "A4 + C#5"}, {"measure": 19, "beat": "2", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G4 + B4 + G3"}, {"measure": 19, "beat": "2.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 19, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 19, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + A4 + D2"}, {"measure": 19, "beat": "3.2", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 19, "beat": "3.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "F#4 + A2"}, {"measure": 19, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 19, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 19, "beat": "4.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 19, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 19, "beat": "4.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 20, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 20, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D5 + D3"}, {"measure": 20, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "A4 + C#5"}, {"measure": 20, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + D5 + G3"}, {"measure": 20, "beat": "2.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C#5 + D3"}, {"measure": 20, "beat": "2.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 20, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 20, "beat": "3.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 20, "beat": "3.5", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E5 + E3"}, {"measure": 20, "beat": "3.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 20, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 20, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 20, "beat": "4.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 20, "beat": "4.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 21, "beat": "1", "notes": [{"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 1.0, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + A5 + D3"}, {"measure": 21, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 21, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "F#5 + D4"}, {"measure": 21, "beat": "2.5", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A5 + A3"}, {"measure": 21, "beat": "3", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A5 + A2"}, {"measure": 21, "beat": "3.5", "notes": [{"freq": 987.77, "dur": 0.5, "staff": 1, "name": "B5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B5 + E3"}, {"measure": 21, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A5 + A3"}, {"measure": 21, "beat": "4.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "G5 + E3"}, {"measure": 22, "beat": "1", "notes": [{"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + F#5 + B2"}, {"measure": 22, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 22, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + B3"}, {"measure": 22, "beat": "2.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#5 + F#3"}, {"measure": 22, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "C#5 + F#5 + F#2"}, {"measure": 22, "beat": "3.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "G5 + C#3"}, {"measure": 22, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#5 + F#3"}, {"measure": 22, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "E5 + C#3"}, {"measure": 23, "beat": "1", "notes": [{"freq": 493.88, "dur": 1.0, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + D5 + G2"}, {"measure": 23, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 23, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 23, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + D3"}, {"measure": 23, "beat": "3", "notes": [{"freq": 440.0, "dur": 1.0, "staff": 1, "name": "A4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + D5 + D2"}, {"measure": 23, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 23, "beat": "4", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 23, "beat": "4.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "D5 + A2"}, {"measure": 24, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + D5 + G2"}, {"measure": 24, "beat": "1.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C5 + D3"}, {"measure": 24, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 24, "beat": "2.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C5 + D3"}, {"measure": 24, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + C#5 + A2"}, {"measure": 24, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 24, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 24, "beat": "4.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 25, "beat": "1", "notes": [{"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 1.0, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "F#5 + A5 + D3"}, {"measure": 25, "beat": "1.2", "notes": [{"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 25, "beat": "1.5", "notes": [{"freq": 293.66, "dur": 0.25, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 25, "beat": "1.8", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 2, "name": "F#4"}], "label": "F#4"}, {"measure": 25, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 293.66, "dur": 0.25, "staff": 2, "name": "D4"}], "label": "F#5 + D4"}, {"measure": 25, "beat": "2.2", "notes": [{"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 25, "beat": "2.5", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "A5 + D3"}, {"measure": 25, "beat": "2.8", "notes": [{"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 25, "beat": "3", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "E5 + A5 + A2"}, {"measure": 25, "beat": "3.2", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 25, "beat": "3.5", "notes": [{"freq": 987.77, "dur": 0.5, "staff": 1, "name": "B5"}, {"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "B5 + A3"}, {"measure": 25, "beat": "3.8", "notes": [{"freq": 277.18, "dur": 0.25, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 25, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "C#5 + A5 + A3"}, {"measure": 25, "beat": "4.2", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 25, "beat": "4.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "G5 + A2"}, {"measure": 25, "beat": "4.8", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 26, "beat": "1", "notes": [{"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.25, "staff": 2, "name": "B2"}], "label": "D5 + F#5 + B2"}, {"measure": 26, "beat": "1.2", "notes": [{"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 26, "beat": "1.5", "notes": [{"freq": 246.94, "dur": 0.25, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 26, "beat": "1.8", "notes": [{"freq": 293.66, "dur": 0.25, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 26, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 246.94, "dur": 0.25, "staff": 2, "name": "B3"}], "label": "D5 + B3"}, {"measure": 26, "beat": "2.2", "notes": [{"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 26, "beat": "2.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.25, "staff": 2, "name": "B2"}], "label": "F#5 + B2"}, {"measure": 26, "beat": "2.8", "notes": [{"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 26, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 92.5, "dur": 0.25, "staff": 2, "name": "F#2"}], "label": "C#5 + F#5 + F#2"}, {"measure": 26, "beat": "3.2", "notes": [{"freq": 138.59, "dur": 0.25, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 26, "beat": "3.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "G5 + F#3"}, {"measure": 26, "beat": "3.8", "notes": [{"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 26, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "A4 + F#5 + F#3"}, {"measure": 26, "beat": "4.2", "notes": [{"freq": 138.59, "dur": 0.25, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 26, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 92.5, "dur": 0.25, "staff": 2, "name": "F#2"}], "label": "E5 + F#2"}, {"measure": 26, "beat": "4.8", "notes": [{"freq": 138.59, "dur": 0.25, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 27, "beat": "1", "notes": [{"freq": 493.88, "dur": 1.0, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.25, "staff": 2, "name": "G2"}], "label": "B4 + D5 + G2"}, {"measure": 27, "beat": "1.2", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 27, "beat": "1.5", "notes": [{"freq": 196.0, "dur": 0.25, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 27, "beat": "1.8", "notes": [{"freq": 246.94, "dur": 0.25, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 27, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.25, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 27, "beat": "2.2", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 27, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.25, "staff": 2, "name": "G2"}], "label": "D5 + G2"}, {"measure": 27, "beat": "2.8", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 27, "beat": "3", "notes": [{"freq": 440.0, "dur": 1.0, "staff": 1, "name": "A4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 73.42, "dur": 0.25, "staff": 2, "name": "D2"}], "label": "A4 + D5 + D2"}, {"measure": 27, "beat": "3.2", "notes": [{"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 27, "beat": "3.5", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 27, "beat": "3.8", "notes": [{"freq": 185.0, "dur": 0.25, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 27, "beat": "4", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 27, "beat": "4.2", "notes": [{"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 27, "beat": "4.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "D5 + D2"}, {"measure": 28, "beat": "1", "notes": [{"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 1.0, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + A5 + D3"}, {"measure": 28, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 28, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "F#5 + D4"}, {"measure": 28, "beat": "2.5", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A5 + A3"}, {"measure": 28, "beat": "3", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A5 + A2"}, {"measure": 28, "beat": "3.5", "notes": [{"freq": 987.77, "dur": 0.5, "staff": 1, "name": "B5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B5 + E3"}, {"measure": 28, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A5 + A3"}, {"measure": 28, "beat": "4.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "G5 + E3"}, {"measure": 29, "beat": "1", "notes": [{"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 1.0, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + F#5 + B2"}, {"measure": 29, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 29, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + B3"}, {"measure": 29, "beat": "2.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#5 + F#3"}, {"measure": 29, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "C#5 + F#5 + F#2"}, {"measure": 29, "beat": "3.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "G5 + C#3"}, {"measure": 29, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#5 + F#3"}, {"measure": 29, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "E5 + C#3"}, {"measure": 30, "beat": "1", "notes": [{"freq": 493.88, "dur": 1.0, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + D5 + G2"}, {"measure": 30, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 30, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 30, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + D3"}, {"measure": 30, "beat": "3", "notes": [{"freq": 440.0, "dur": 1.0, "staff": 1, "name": "A4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + D5 + D2"}, {"measure": 30, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 30, "beat": "4", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 30, "beat": "4.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "D5 + A2"}, {"measure": 31, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + D5 + G2"}, {"measure": 31, "beat": "1.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C5 + D3"}, {"measure": 31, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 31, "beat": "2.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C5 + D3"}, {"measure": 31, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + C#5 + A2"}, {"measure": 31, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 31, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 31, "beat": "4.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 32, "beat": "1", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A5 + D3"}, {"measure": 32, "beat": "1.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#5 + A3"}, {"measure": 32, "beat": "1.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 32, "beat": "2", "notes": [{"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "A5 + D4"}, {"measure": 32, "beat": "2.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#5 + A3"}, {"measure": 32, "beat": "2.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 32, "beat": "3", "notes": [{"freq": 880.0, "dur": 0.25, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A5 + A2"}, {"measure": 32, "beat": "3.2", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 32, "beat": "3.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 32, "beat": "3.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 32, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + A3"}, {"measure": 32, "beat": "4.2", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 32, "beat": "4.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "F#5 + E3"}, {"measure": 32, "beat": "4.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 33, "beat": "1", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "F#5 + B2"}, {"measure": 33, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "D5 + F#3"}, {"measure": 33, "beat": "1.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 33, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "F#5 + B3"}, {"measure": 33, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#4 + F#3"}, {"measure": 33, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 33, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + F#2"}, {"measure": 33, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 33, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "A4 + C#3"}, {"measure": 33, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 33, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#3"}, {"measure": 33, "beat": "4.2", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}], "label": "F#4"}, {"measure": 33, "beat": "4.5", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "G4 + C#3"}, {"measure": 33, "beat": "4.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 34, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + G2"}, {"measure": 34, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D3"}, {"measure": 34, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 34, "beat": "2", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G4 + G3"}, {"measure": 34, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 34, "beat": "2.8", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 34, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + D2"}, {"measure": 34, "beat": "3.2", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 34, "beat": "3.5", "notes": [{"freq": 293.66, "dur": 0.25, "staff": 1, "name": "D4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "D4 + A2"}, {"measure": 34, "beat": "3.8", "notes": [{"freq": 329.63, "dur": 0.25, "staff": 1, "name": "E4"}], "label": "E4"}, {"measure": 34, "beat": "4", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#4 + D3"}, {"measure": 34, "beat": "4.2", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 34, "beat": "4.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + A2"}, {"measure": 34, "beat": "4.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 35, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + G2"}, {"measure": 35, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D3"}, {"measure": 35, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 35, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 35, "beat": "2.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C#5 + D3"}, {"measure": 35, "beat": "2.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 35, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 35, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 35, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 35, "beat": "3.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 35, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 35, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 35, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E5 + E3"}, {"measure": 35, "beat": "4.8", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}], "label": "F#5"}, {"measure": 36, "beat": "1", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + A5 + D3"}, {"measure": 36, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + F#5 + A3"}, {"measure": 36, "beat": "1.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "E5 + G5"}, {"measure": 36, "beat": "2", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "F#5 + A5 + D4"}, {"measure": 36, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + F#5 + A3"}, {"measure": 36, "beat": "2.8", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "E5 + G5"}, {"measure": 36, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.25, "staff": 1, "name": "A5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A5 + A2"}, {"measure": 36, "beat": "3.2", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}], "label": "A4"}, {"measure": 36, "beat": "3.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 36, "beat": "3.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 36, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "D5 + A3"}, {"measure": 36, "beat": "4.2", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "E5"}, {"measure": 36, "beat": "4.5", "notes": [{"freq": 739.99, "dur": 0.25, "staff": 1, "name": "F#5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "F#5 + E3"}, {"measure": 36, "beat": "4.8", "notes": [{"freq": 783.99, "dur": 0.25, "staff": 1, "name": "G5"}], "label": "G5"}, {"measure": 37, "beat": "1", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + F#5 + B2"}, {"measure": 37, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "B4 + D5 + F#3"}, {"measure": 37, "beat": "1.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}], "label": "C#5 + E5"}, {"measure": 37, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + F#5 + B3"}, {"measure": 37, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#4 + F#3"}, {"measure": 37, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 37, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "F#4 + A4 + F#2"}, {"measure": 37, "beat": "3.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 37, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "A4 + C#3"}, {"measure": 37, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 37, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "A4 + F#3"}, {"measure": 37, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 37, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#5 + C#3"}, {"measure": 37, "beat": "4.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 38, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 38, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D5 + D3"}, {"measure": 38, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "A4 + C#5"}, {"measure": 38, "beat": "2", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G4 + B4 + G3"}, {"measure": 38, "beat": "2.5", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 38, "beat": "2.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 38, "beat": "3", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + A4 + D2"}, {"measure": 38, "beat": "3.2", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 38, "beat": "3.5", "notes": [{"freq": 369.99, "dur": 0.25, "staff": 1, "name": "F#4"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "F#4 + A2"}, {"measure": 38, "beat": "3.8", "notes": [{"freq": 392.0, "dur": 0.25, "staff": 1, "name": "G4"}], "label": "G4"}, {"measure": 38, "beat": "4", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 38, "beat": "4.2", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 38, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 38, "beat": "4.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 39, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 39, "beat": "1.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "B4 + D5 + D3"}, {"measure": 39, "beat": "1.8", "notes": [{"freq": 440.0, "dur": 0.25, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "A4 + C#5"}, {"measure": 39, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + D5 + G3"}, {"measure": 39, "beat": "2.5", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "C#5 + D3"}, {"measure": 39, "beat": "2.8", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}], "label": "B4"}, {"measure": 39, "beat": "3", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 39, "beat": "3.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 39, "beat": "3.5", "notes": [{"freq": 659.26, "dur": 0.25, "staff": 1, "name": "E5"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E5 + E3"}, {"measure": 39, "beat": "3.8", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 39, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 39, "beat": "4.2", "notes": [{"freq": 587.33, "dur": 0.25, "staff": 1, "name": "D5"}], "label": "D5"}, {"measure": 39, "beat": "4.5", "notes": [{"freq": 493.88, "dur": 0.25, "staff": 1, "name": "B4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "B4 + E3"}, {"measure": 39, "beat": "4.8", "notes": [{"freq": 554.37, "dur": 0.25, "staff": 1, "name": "C#5"}], "label": "C#5"}, {"measure": 40, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 98.0, "dur": 0.25, "staff": 2, "name": "G2"}], "label": "G4 + D5 + G2"}, {"measure": 40, "beat": "1.2", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 40, "beat": "1.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 196.0, "dur": 0.25, "staff": 2, "name": "G3"}], "label": "C5 + G3"}, {"measure": 40, "beat": "1.8", "notes": [{"freq": 246.94, "dur": 0.25, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 40, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.25, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 40, "beat": "2.2", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 40, "beat": "2.5", "notes": [{"freq": 523.25, "dur": 0.5, "staff": 1, "name": "C5"}, {"freq": 98.0, "dur": 0.25, "staff": 2, "name": "G2"}], "label": "C5 + G2"}, {"measure": 40, "beat": "2.8", "notes": [{"freq": 146.83, "dur": 0.25, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 40, "beat": "3", "notes": [{"freq": 440.0, "dur": 1.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 1.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "A4 + C#5 + A2"}, {"measure": 40, "beat": "3.2", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 40, "beat": "3.5", "notes": [{"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 40, "beat": "3.8", "notes": [{"freq": 277.18, "dur": 0.25, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 40, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 220.0, "dur": 0.25, "staff": 2, "name": "A3"}], "label": "D5 + A3"}, {"measure": 40, "beat": "4.2", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 40, "beat": "4.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.25, "staff": 2, "name": "A2"}], "label": "E5 + A2"}, {"measure": 40, "beat": "4.8", "notes": [{"freq": 164.81, "dur": 0.25, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 41, "beat": "1", "notes": [{"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 2.0, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + F#5 + D3"}, {"measure": 41, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 41, "beat": "2", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 41, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 2, "name": "F#4"}], "label": "F#4"}, {"measure": 41, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 659.26, "dur": 2.0, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + E5 + A2"}, {"measure": 41, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 41, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 41, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 42, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "B4 + D5 + B2"}, {"measure": 42, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 42, "beat": "2", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 42, "beat": "2.5", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 42, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + C#5 + F#2"}, {"measure": 42, "beat": "3.5", "notes": [{"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 42, "beat": "4", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 42, "beat": "4.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 43, "beat": "1", "notes": [{"freq": 392.0, "dur": 2.0, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 43, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 43, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 43, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 43, "beat": "3", "notes": [{"freq": 369.99, "dur": 2.0, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "F#4 + A4 + D2"}, {"measure": 43, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 43, "beat": "4", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 43, "beat": "4.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 44, "beat": "1", "notes": [{"freq": 392.0, "dur": 2.0, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 44, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 44, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 44, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 44, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A4 + C#5 + A2"}, {"measure": 44, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 44, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 44, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 45, "beat": "1", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + F#5 + D3"}, {"measure": 45, "beat": "1.5", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "C#5 + A3"}, {"measure": 45, "beat": "2", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D5 + D4"}, {"measure": 45, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "F#4 + A3"}, {"measure": 45, "beat": "3", "notes": [{"freq": 329.63, "dur": 0.5, "staff": 1, "name": "E4"}, {"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E4 + E5 + A2"}, {"measure": 45, "beat": "3.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 45, "beat": "4", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "G4 + A3"}, {"measure": 45, "beat": "4.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "A4 + E3"}, {"measure": 46, "beat": "1", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 1, "name": "F#4"}, {"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "F#4 + D5 + B2"}, {"measure": 46, "beat": "1.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "D5 + F#3"}, {"measure": 46, "beat": "2", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "C#5 + B3"}, {"measure": 46, "beat": "2.5", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "B4 + F#3"}, {"measure": 46, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "A4 + C#5 + F#2"}, {"measure": 46, "beat": "3.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "F#5 + C#3"}, {"measure": 46, "beat": "4", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 880.0, "dur": 0.5, "staff": 1, "name": "A5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "C#5 + A5 + F#3"}, {"measure": 46, "beat": "4.5", "notes": [{"freq": 987.77, "dur": 0.5, "staff": 1, "name": "B5"}, {"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "B5 + C#3"}, {"measure": 47, "beat": "1", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G5 + G2"}, {"measure": 47, "beat": "1.5", "notes": [{"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + D3"}, {"measure": 47, "beat": "2", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "E5 + G3"}, {"measure": 47, "beat": "2.5", "notes": [{"freq": 783.99, "dur": 0.5, "staff": 1, "name": "G5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "G5 + D3"}, {"measure": 47, "beat": "3", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 739.99, "dur": 0.5, "staff": 1, "name": "F#5"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + F#5 + D2"}, {"measure": 47, "beat": "3.5", "notes": [{"freq": 659.26, "dur": 0.5, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A2"}, {"measure": 47, "beat": "4", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D5 + D3"}, {"measure": 47, "beat": "4.5", "notes": [{"freq": 554.37, "dur": 0.5, "staff": 1, "name": "C#5"}, {"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "C#5 + F#3"}, {"measure": 48, "beat": "1", "notes": [{"freq": 392.0, "dur": 0.5, "staff": 1, "name": "G4"}, {"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "G4 + B4 + G2"}, {"measure": 48, "beat": "1.5", "notes": [{"freq": 440.0, "dur": 0.5, "staff": 1, "name": "A4"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "A4 + D3"}, {"measure": 48, "beat": "2", "notes": [{"freq": 493.88, "dur": 0.5, "staff": 1, "name": "B4"}, {"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "B4 + G3"}, {"measure": 48, "beat": "2.5", "notes": [{"freq": 587.33, "dur": 0.5, "staff": 1, "name": "D5"}, {"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "D5 + B3"}, {"measure": 48, "beat": "3", "notes": [{"freq": 329.63, "dur": 1.0, "staff": 1, "name": "E4"}, {"freq": 587.33, "dur": 1.0, "staff": 1, "name": "D5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E4 + D5 + A2"}, {"measure": 48, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 48, "beat": "4", "notes": [{"freq": 329.63, "dur": 1.0, "staff": 1, "name": "E4"}, {"freq": 554.37, "dur": 1.0, "staff": 1, "name": "C#5"}, {"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "E4 + C#5 + A3"}, {"measure": 48, "beat": "4.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 49, "beat": "1", "notes": [{"freq": 739.99, "dur": 2.0, "staff": 1, "name": "F#5"}, {"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "F#5 + D3"}, {"measure": 49, "beat": "1.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 49, "beat": "2", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 49, "beat": "2.5", "notes": [{"freq": 369.99, "dur": 0.5, "staff": 2, "name": "F#4"}], "label": "F#4"}, {"measure": 49, "beat": "3", "notes": [{"freq": 659.26, "dur": 2.0, "staff": 1, "name": "E5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "E5 + A2"}, {"measure": 49, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 49, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 49, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 50, "beat": "1", "notes": [{"freq": 587.33, "dur": 2.0, "staff": 1, "name": "D5"}, {"freq": 123.47, "dur": 0.5, "staff": 2, "name": "B2"}], "label": "D5 + B2"}, {"measure": 50, "beat": "1.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 50, "beat": "2", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 50, "beat": "2.5", "notes": [{"freq": 293.66, "dur": 0.5, "staff": 2, "name": "D4"}], "label": "D4"}, {"measure": 50, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 92.5, "dur": 0.5, "staff": 2, "name": "F#2"}], "label": "C#5 + F#2"}, {"measure": 50, "beat": "3.5", "notes": [{"freq": 138.59, "dur": 0.5, "staff": 2, "name": "C#3"}], "label": "C#3"}, {"measure": 50, "beat": "4", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 50, "beat": "4.5", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 51, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G2"}, {"measure": 51, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 51, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 51, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 51, "beat": "3", "notes": [{"freq": 440.0, "dur": 2.0, "staff": 1, "name": "A4"}, {"freq": 73.42, "dur": 0.5, "staff": 2, "name": "D2"}], "label": "A4 + D2"}, {"measure": 51, "beat": "3.5", "notes": [{"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "A2"}, {"measure": 51, "beat": "4", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 51, "beat": "4.5", "notes": [{"freq": 185.0, "dur": 0.5, "staff": 2, "name": "F#3"}], "label": "F#3"}, {"measure": 52, "beat": "1", "notes": [{"freq": 493.88, "dur": 2.0, "staff": 1, "name": "B4"}, {"freq": 98.0, "dur": 0.5, "staff": 2, "name": "G2"}], "label": "B4 + G2"}, {"measure": 52, "beat": "1.5", "notes": [{"freq": 146.83, "dur": 0.5, "staff": 2, "name": "D3"}], "label": "D3"}, {"measure": 52, "beat": "2", "notes": [{"freq": 196.0, "dur": 0.5, "staff": 2, "name": "G3"}], "label": "G3"}, {"measure": 52, "beat": "2.5", "notes": [{"freq": 246.94, "dur": 0.5, "staff": 2, "name": "B3"}], "label": "B3"}, {"measure": 52, "beat": "3", "notes": [{"freq": 554.37, "dur": 2.0, "staff": 1, "name": "C#5"}, {"freq": 110.0, "dur": 0.5, "staff": 2, "name": "A2"}], "label": "C#5 + A2"}, {"measure": 52, "beat": "3.5", "notes": [{"freq": 164.81, "dur": 0.5, "staff": 2, "name": "E3"}], "label": "E3"}, {"measure": 52, "beat": "4", "notes": [{"freq": 220.0, "dur": 0.5, "staff": 2, "name": "A3"}], "label": "A3"}, {"measure": 52, "beat": "4.5", "notes": [{"freq": 277.18, "dur": 0.5, "staff": 2, "name": "C#4"}], "label": "C#4"}, {"measure": 53, "beat": "1", "notes": [{"freq": 293.66, "dur": 4.0, "staff": 1, "name": "D4"}, {"freq": 369.99, "dur": 4.0, "staff": 1, "name": "F#4"}, {"freq": 440.0, "dur": 4.0, "staff": 1, "name": "A4"}, {"freq": 587.33, "dur": 4.0, "staff": 1, "name": "D5"}, {"freq": 73.42, "dur": 4.0, "staff": 2, "name": "D2"}, {"freq": 110.0, "dur": 4.0, "staff": 2, "name": "A2"}, {"freq": 146.83, "dur": 4.0, "staff": 2, "name": "D3"}], "label": "D4 + F#4 + A4 + D5…"}];
+    let audioCtx = null;
+    let scoreIndex = 0;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.value = -18;
+        compressor.knee.value = 18;
+        compressor.ratio.value = 8;
+        compressor.attack.value = 0.003;
+        compressor.release.value = 0.18;
+
+        const masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.92;
+
+        compressor.connect(masterGain);
+        masterGain.connect(audioCtx.destination);
+
+        audioCtx._compressor = compressor;
+        audioCtx._masterGain = masterGain;
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playHammer(startAt, amount = 0.0024) {
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.02);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        const decay = Math.pow(1 - i / bufferSize, 3.4);
+        data[i] = (Math.random() * 2 - 1) * decay;
+      }
+
+      const src = audioCtx.createBufferSource();
+      const bandpass = audioCtx.createBiquadFilter();
+      const gain = audioCtx.createGain();
+
+      src.buffer = buffer;
+      bandpass.type = 'bandpass';
+      bandpass.frequency.setValueAtTime(2400, startAt);
+      bandpass.Q.value = 0.9;
+
+      gain.gain.setValueAtTime(amount, startAt);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.02);
+
+      src.connect(bandpass);
+      bandpass.connect(gain);
+      gain.connect(audioCtx._compressor);
+
+      src.start(startAt);
+      src.stop(startAt + 0.03);
+    }
+
+    function playPianoTone(freq, startAt, duration, volume, tone = 'triangle') {
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const lowpass = audioCtx.createBiquadFilter();
+
+      osc1.type = tone;
+      osc2.type = 'sine';
+      osc1.frequency.setValueAtTime(freq, startAt);
+      osc2.frequency.setValueAtTime(freq * 2, startAt);
+
+      lowpass.type = 'lowpass';
+      lowpass.frequency.setValueAtTime(2200, startAt);
+
+      gain.gain.setValueAtTime(0.0001, startAt);
+      gain.gain.exponentialRampToValueAtTime(volume, startAt + 0.01);
+      gain.gain.exponentialRampToValueAtTime(volume * 0.55, startAt + 0.06);
+      gain.gain.exponentialRampToValueAtTime(volume * 0.18, startAt + duration * 0.55);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+
+      osc1.connect(lowpass);
+      osc2.connect(lowpass);
+      lowpass.connect(gain);
+      gain.connect(audioCtx._compressor);
+
+      osc1.start(startAt);
+      osc2.start(startAt);
+      osc1.stop(startAt + duration + 0.03);
+      osc2.stop(startAt + duration + 0.03);
+    }
+
+    function popNote(x, y, text) {
+      const el = document.createElement('div');
+      el.className = 'note-pop';
+      el.textContent = text;
+      el.style.left = (x + (Math.random() - 0.5) * 20) + 'px';
+      el.style.top = (y - 8 + (Math.random() - 0.5) * 14) + 'px';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    function playScoreStep() {
+      ensureAudio();
+
+      const ev = scoreEvents[scoreIndex];
+      scoreIndex = (scoreIndex + 1) % scoreEvents.length;
+
+      const now = audioCtx.currentTime;
+      const minGap = 0.055;
+      const startAt = Math.max(now + 0.004, queuedNextStart);
+      queuedNextStart = startAt + minGap;
+
+      ev.notes.forEach((n, i) => {
+        const isBass = n.staff === 2;
+        const tone = isBass ? 'triangle' : 'sine';
+        const volume = isBass ? 0.013 : 0.017;
+        const duration = Math.max(0.14, Math.min(n.dur, 1.0)) * 0.84;
+        const offset = isBass ? 0 : 0.007 + i * 0.003;
+        const hammerAmt = fastClickStreak >= 3 ? (isBass ? 0.0012 : 0.0009) : (isBass ? 0.0030 : 0.0022);
+
+        playHammer(startAt + offset, hammerAmt);
+        playPianoTone(n.freq, startAt + offset, duration, volume, tone);
+      });
+
+      return ev;
+    }
+
+    function handlePress(x, y) {
+      ensureAudio();
+
+      const t = performance.now();
+      if (!window._lastUiPressAt) window._lastUiPressAt = 0;
+      const uiGap = t - window._lastUiPressAt;
+      window._lastUiPressAt = t;
+
+      fastClickStreak = uiGap < 85 ? Math.min(fastClickStreak + 1, 10) : 0;
+
+      burstHearts(x, y, 54);
+      const ev = playScoreStep();
+      popNote(x, y, `m${ev.measure} · ${ev.label}`);
+    }
+
+    window.addEventListener('click', (e) => handlePress(e.clientX, e.clientY));
+    window.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      if (t) handlePress(t.clientX, t.clientY);
+    }, { passive: true });
+  </script>
+</body>
+</html>
