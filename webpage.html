@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我的 GitHub 网页</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #1f2937;
+      background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 45%, #ecfeff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(720px, 100%);
+      padding: 44px 32px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 24px 60px rgba(31, 41, 55, 0.12);
+      backdrop-filter: blur(12px);
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(34px, 8vw, 58px);
+      letter-spacing: -1px;
+    }
+    p {
+      margin: 0 auto 28px;
+      max-width: 560px;
+      line-height: 1.8;
+      font-size: 18px;
+      color: #4b5563;
+    }
+    .btn {
+      display: inline-block;
+      padding: 13px 24px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: white;
+      background: #111827;
+      font-weight: 700;
+      transition: transform .18s ease, box-shadow .18s ease;
+      box-shadow: 0 12px 26px rgba(17, 24, 39, 0.18);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(17, 24, 39, 0.24);
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>你好，GitHub Pages</h1>
+    <p>这是一个由 HTML 和 CSS 创建的简洁网页。你可以把这里改成个人介绍、作品展示、表白页、学习资料页或项目主页。</p>
+    <a class="btn" href="https://github.com/Lovedting/heart-page">查看 GitHub 仓库</a>
+    <div class="footer">Created with GitHub · Lovedting/heart-page</div>
+  </main>
+</body>
+</html>
